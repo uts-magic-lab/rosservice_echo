@@ -60,14 +60,14 @@ def create_cb(service_name, port, verbose_mode):
             direction = 'OUTCOMING'
         elif dst == port:
             direction = 'INCOMING'
-        if verbose_mode:
-            print("-> %s service message from port %d to port %d from ip %s to ip %s TCP flags: %s" %
-                  (direction, src, dst, srcip, dstip, flags_str))
         else:
             if verbose_mode:
                 print(
                     "Error: Received a packet that neither the source or destination port is the one requested.")
-                return
+            return
+        if verbose_mode:
+            print("-> %s service message from port %d to port %d from ip %s to ip %s TCP flags: %s" %
+                  (direction, src, dst, srcip, dstip, flags_str))
 
         if len(payload) >= 4:
             if direction == 'OUTCOMING':
@@ -120,6 +120,9 @@ def create_cb(service_name, port, verbose_mode):
                         print("  %s = %s" % (fieldname, fieldvalue))
                     if fieldname == 'type':
                         previous_srv_type = fieldvalue
+                        if verbose_mode:
+                            print("\n\n\n\n   >>> setting previous_srv_type to %s  <<<\n\n\n\n\n\n" % (
+                                previous_srv_type))
                     if fieldname == 'service':
                         previous_srv_name = fieldvalue
 
@@ -127,6 +130,8 @@ def create_cb(service_name, port, verbose_mode):
             else:
                 # Here the magic of the class that deserializes is needed
                 # because it knows what is coming
+                if verbose_mode:
+                    print("  Message to deserialize...")
                 if previous_srv_type is not None and previous_srv_name == service_name:
                     pkg_name, srv_type = previous_srv_type.split('/')
                     srv_class = locate(pkg_name + ".srv." + srv_type)
@@ -154,7 +159,13 @@ def create_cb(service_name, port, verbose_mode):
                     # Mimic rostopic echo
                     if direction == 'OUTCOMING':
                         print("---")
-
+                else:
+                    if verbose_mode:
+                        print("Missing information to deserialize.")
+                        if previous_srv_type is None:
+                            print(
+                                "We don't have cached a previous message that contains the message type.")
+                        print("Raw message: %s" % (payload))
         else:
             if verbose_mode:
                 print("  TCP protocol message.")
