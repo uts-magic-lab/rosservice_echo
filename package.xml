@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <name>rosservice_echo</name>
+  <version>0.0.0</version>
+  <description>The rosservice_echo package offers a tool to do rosservice echo 
+    but it must be run as root.</description>
+
+  <maintainer email="Sammy.Pfeiffer@student.uts.edu.au">Sammy Pfeiffer</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>python-scapy</run_depend>
+  <run_depend>rospy</run_depend>
+
+</package>
